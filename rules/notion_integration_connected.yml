@@ -5,10 +5,6 @@ description: |-
   account is connected. Integrations and connected accounts are granted access
   to workspace data and represent a supply-chain / trusted-relationship risk if
   added by an unexpected actor.
-
-  Note: this also fires the first time a legitimate integration (such as a SIEM
-  export integration) is connected. Confirm the actor and the integration name
-  are expected.
 severity: Medium
 query_text: |-
   @scnr.source_type:notion

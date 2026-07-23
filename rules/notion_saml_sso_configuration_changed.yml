@@ -5,12 +5,6 @@ description: |-
   metadata (URL or XML), enabling/disabling SAML, enforcing SAML, and SAML
   automatic account creation. Changes to federated authentication can be used
   to hijack the authentication process or weaken access controls.
-
-  Note (doc-only): this rule is derived from Notion's SIEM event catalog and
-  was not observed in available sample logs. It matches on event type names
-  (reliable), which discriminate the action without needing payload values.
-  Validate the event type strings against ingested JSONL before relying on it;
-  SAML/SSO events may only be emitted on Enterprise-tier workspaces.
 severity: High
 query_text: |-
   @scnr.source_type:notion

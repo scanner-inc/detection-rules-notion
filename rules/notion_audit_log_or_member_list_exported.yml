@@ -6,10 +6,6 @@ description: |-
   exporting the member list exposes user PII. These are rare, admin-only
   actions - unlike per-page content exports, which are high-volume and not
   alerted on here.
-
-  Note (doc-only): derived from Notion's SIEM event catalog; not observed in
-  available sample logs. Matches on event type names. Validate the event type
-  strings against ingested JSONL before relying on it.
 severity: Medium
 query_text: |-
   @scnr.source_type:notion

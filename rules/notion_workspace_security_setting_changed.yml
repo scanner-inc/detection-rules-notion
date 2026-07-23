@@ -7,11 +7,6 @@ description: |-
   allowlist. This rule is direction-agnostic - it alerts whenever one of these
   settings is changed, in either direction - and is intended for review of
   administrative configuration drift.
-
-  Note (doc-only): derived from Notion's SIEM event catalog; most of these were
-  not observed in available sample logs. Matches on event type names (reliable)
-  rather than payload values. Validate the event type strings against ingested
-  JSONL before relying on it.
 severity: Medium
 query_text: |-
   @scnr.source_type:notion

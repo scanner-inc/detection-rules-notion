@@ -7,10 +7,6 @@ description: |-
   platform operations. This rule provides visibility into third-party operator
   access to your workspace so it can be reconciled against expected support or
   retention activity.
-
-  Note: the reliable discriminator is the actor email domain. If the actor role
-  field (notion_admin) is confirmed in ingested JSONL, it can be used instead
-  or in addition.
 severity: Informational
 query_text: |-
   @scnr.source_type:notion

@@ -4,10 +4,6 @@ description: |-
   Detect when a page grants access to a guest user or an entire email domain.
   External grants expand the audience of internal content and should be
   reviewed, especially for sensitive pages.
-
-  Note: an optional refinement to filter on page audience (shared externally)
-  is available once the audience field path is confirmed against ingested
-  JSONL. The event types matched here already imply external access.
 severity: Low
 query_text: |-
   @scnr.source_type:notion

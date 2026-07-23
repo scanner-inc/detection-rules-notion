@@ -5,11 +5,6 @@ description: |-
   backup codes) on their account. Removing authentication factors can weaken
   account security and may indicate account takeover or an attacker
   establishing alternate access.
-
-  Note (doc-only): derived from Notion's SIEM event catalog; not observed in
-  available sample logs. The mfa_*_updated events fire on both enabling and
-  disabling a factor - narrow to removal/disable once the payload field path is
-  confirmed against ingested JSONL.
 severity: Medium
 query_text: |-
   @scnr.source_type:notion
