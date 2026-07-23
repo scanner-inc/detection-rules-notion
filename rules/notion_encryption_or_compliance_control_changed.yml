@@ -1,0 +1,27 @@
+# schema: https://scanner.dev/schema/scanner-detection-rule.v1.json
+name: Notion Encryption or Compliance Control Changed
+description: |-
+  Detect changes to encryption and compliance controls: revocation of a
+  workspace encryption key (EKM), changes to HIPAA compliance, and changes to
+  data-retention delays (trash delete delay and purge delay). Revoking
+  encryption keys or disabling compliance controls removes protections and can
+  be used to weaken defenses or destroy the ability to recover data.
+
+  Note (doc-only): derived from Notion's SIEM event catalog; not observed in
+  available sample logs. Matches on event type names. Validate the event type
+  strings against ingested JSONL before relying on it; EKM and HIPAA events may
+  only be emitted on Enterprise-tier workspaces.
+severity: High
+query_text: |-
+  @scnr.source_type:notion
+  event.type:(workspace.ekm.wek.revoked workspace.settings.hipaa_compliance_updated workspace.settings.delete_from_trash_delay workspace.settings.purge_delay)
+  | groupbycount(event.actor.person.email)
+  | where @q.count > 0
+time_range_s: 300
+run_frequency_s: 60
+event_sink_keys:
+- high_severity_alerts
+tags:
+- tactics.ta0005.defense_evasion
+- techniques.t1562.impair_defenses
+- source.notion

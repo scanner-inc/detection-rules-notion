@@ -1,0 +1,20 @@
+# schema: https://scanner.dev/schema/scanner-detection-rule.v1.json
+name: Notion Page Shared to Web or Public
+description: |-
+  Detect when a page is shared publicly to the web. Publicly shared pages are
+  accessible to anyone with the link and are a common source of unintended data
+  exposure. Confirm the page contents are intended to be public.
+severity: Low
+query_text: |-
+  @scnr.source_type:notion
+  event.type:(page.permissions.shared_to_public_role_added page.permissions.shared_to_public_role_updated)
+  | groupbycount(event.actor.person.email)
+  | where @q.count > 0
+time_range_s: 300
+run_frequency_s: 60
+event_sink_keys:
+- low_severity_alerts
+tags:
+- tactics.ta0010.exfiltration
+- techniques.t1567.exfiltration_over_web_service
+- source.notion

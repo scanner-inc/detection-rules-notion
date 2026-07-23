@@ -1,0 +1,26 @@
+# schema: https://scanner.dev/schema/scanner-detection-rule.v1.json
+name: Notion Audit Log or Member List Exported
+description: |-
+  Detect when a workspace owner exports the audit log or the member list.
+  Exporting the audit log can be an anti-forensics or reconnaissance step;
+  exporting the member list exposes user PII. These are rare, admin-only
+  actions - unlike per-page content exports, which are high-volume and not
+  alerted on here.
+
+  Note (doc-only): derived from Notion's SIEM event catalog; not observed in
+  available sample logs. Matches on event type names. Validate the event type
+  strings against ingested JSONL before relying on it.
+severity: Medium
+query_text: |-
+  @scnr.source_type:notion
+  event.type:(workspace.audit_log_exported workspace.members_exported)
+  | groupbycount(event.actor.person.email)
+  | where @q.count > 0
+time_range_s: 300
+run_frequency_s: 60
+event_sink_keys:
+- medium_severity_alerts
+tags:
+- tactics.ta0009.collection
+- techniques.t1213.data_from_information_repositories
+- source.notion

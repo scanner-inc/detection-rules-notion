@@ -1,0 +1,21 @@
+# schema: https://scanner.dev/schema/scanner-detection-rule.v1.json
+name: Notion Member Invited or Joined Workspace
+description: |-
+  Detect when a user is invited to, or joins, the workspace. Useful for
+  onboarding visibility and for spotting unexpected additions of external
+  users. Informational by design; expected to be routine in a growing
+  workspace.
+severity: Informational
+query_text: |-
+  @scnr.source_type:notion
+  event.type:(workspace.permissions.member_invited workspace.permissions.member_added)
+  | groupbycount(event.actor.person.email)
+  | where @q.count > 0
+time_range_s: 300
+run_frequency_s: 60
+event_sink_keys:
+- informational_severity_alerts
+tags:
+- tactics.ta0001.initial_access
+- techniques.t1078.valid_accounts
+- source.notion

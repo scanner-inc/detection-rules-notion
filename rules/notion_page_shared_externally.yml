@@ -1,0 +1,24 @@
+# schema: https://scanner.dev/schema/scanner-detection-rule.v1.json
+name: Notion Page Shared with External User or Domain
+description: |-
+  Detect when a page grants access to a guest user or an entire email domain.
+  External grants expand the audience of internal content and should be
+  reviewed, especially for sensitive pages.
+
+  Note: an optional refinement to filter on page audience (shared externally)
+  is available once the audience field path is confirmed against ingested
+  JSONL. The event types matched here already imply external access.
+severity: Low
+query_text: |-
+  @scnr.source_type:notion
+  event.type:(page.permissions.guest_role_added page.permissions.shared_with_email_domain_role_added)
+  | groupbycount(event.actor.person.email)
+  | where @q.count > 0
+time_range_s: 300
+run_frequency_s: 60
+event_sink_keys:
+- low_severity_alerts
+tags:
+- tactics.ta0010.exfiltration
+- techniques.t1567.exfiltration_over_web_service
+- source.notion

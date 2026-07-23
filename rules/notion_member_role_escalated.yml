@@ -1,0 +1,36 @@
+# schema: https://scanner.dev/schema/scanner-detection-rule.v1.json
+name: Notion Member Role Escalated
+description: |-
+  ## Goal
+  Detect privilege escalation via workspace member role changes, particularly
+  promotions to Membership admin or Workspace owner.
+
+  ## Strategy
+  Monitor workspace.permissions.member_role_updated events. Audit-log samples
+  show these carry the role transition (e.g. "from Member to Membership admin",
+  "from Membership admin to Workspace owner").
+
+  ## Triage and Response
+  1. Confirm the actor performing the change is authorized to manage roles.
+  2. Confirm the promotion of the target user is expected.
+  3. If not, revert the role and investigate the actor's recent activity.
+
+  Note: the query currently matches all role updates because the structured
+  new-role field path is not yet confirmed against ingested JSONL. Role updates
+  are rare (single digits per quarter in sample data), so this is low volume at
+  High severity. Once the field path is confirmed, narrow to promotions to
+  Membership admin / Workspace owner.
+severity: High
+query_text: |-
+  @scnr.source_type:notion
+  event.type:workspace.permissions.member_role_updated
+  | groupbycount(event.actor.person.email)
+  | where @q.count > 0
+time_range_s: 300
+run_frequency_s: 60
+event_sink_keys:
+- high_severity_alerts
+tags:
+- tactics.ta0004.privilege_escalation
+- techniques.t1078.valid_accounts
+- source.notion

@@ -1,0 +1,25 @@
+# schema: https://scanner.dev/schema/scanner-detection-rule.v1.json
+name: Notion Integration or External Account Connected
+description: |-
+  Detect when an integration is added to the workspace or an external/public
+  account is connected. Integrations and connected accounts are granted access
+  to workspace data and represent a supply-chain / trusted-relationship risk if
+  added by an unexpected actor.
+
+  Note: this also fires the first time a legitimate integration (such as a SIEM
+  export integration) is connected. Confirm the actor and the integration name
+  are expected.
+severity: Medium
+query_text: |-
+  @scnr.source_type:notion
+  event.type:(workspace.external_account_connected workspace.integration_added integration.created)
+  | groupbycount(event.actor.person.email)
+  | where @q.count > 0
+time_range_s: 300
+run_frequency_s: 60
+event_sink_keys:
+- medium_severity_alerts
+tags:
+- tactics.ta0001.initial_access
+- techniques.t1199.trusted_relationship
+- source.notion
