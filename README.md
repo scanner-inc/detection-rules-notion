@@ -6,7 +6,7 @@ events (https://developers.notion.com/compliance/siem-events).
 ### Examples
 
 Here are a few examples of the detections that are included in this repository:
-- Member Role Escalated
+- Member Role Updated
 - Page Shared to Web or Public
 - Integration or External Account Connected
 - SAML/SSO Configuration Changed
