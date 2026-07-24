@@ -1,0 +1,22 @@
+# schema: https://scanner.dev/schema/scanner-detection-rule.v1.json
+name: Notion AI Agent or MCP Server Connected
+description: |-
+  Detect when an MCP (Model Context Protocol) server or client is connected, or
+  a custom AI agent is created or published. These surfaces grant AI tools
+  programmatic access to workspace content and should be reviewed to confirm
+  the connection is expected (audit-log samples show, for example, Claude
+  connecting to the Notion MCP server).
+severity: Medium
+query_text: |-
+  @scnr.source_type:notion
+  event.type:(workspace.mcp.server_connected workspace.mcp.client_added workspace.custom_agent.created workspace.custom_agent.published workspace.custom_agent.setup_mode_used)
+  | groupbycount(event.actor.person.email)
+  | where @q.count > 0
+time_range_s: 300
+run_frequency_s: 60
+event_sink_keys:
+- medium_severity_alerts
+tags:
+- tactics.ta0001.initial_access
+- techniques.t1199.trusted_relationship
+- source.notion

@@ -1,0 +1,21 @@
+# schema: https://scanner.dev/schema/scanner-detection-rule.v1.json
+name: Notion SAML/SSO Configuration Changed
+description: |-
+  Detect changes to SAML/SSO configuration, including identity provider
+  metadata (URL or XML), enabling/disabling SAML, enforcing SAML, and SAML
+  automatic account creation. Changes to federated authentication can be used
+  to hijack the authentication process or weaken access controls.
+severity: High
+query_text: |-
+  @scnr.source_type:notion
+  event.type:(workspace.saml_sso_idp_metadata_url_added workspace.saml_sso_idp_metadata_url_removed workspace.saml_sso_idp_metadata_url_updated workspace.saml_sso_idp_metadata_xml_added workspace.saml_sso_idp_metadata_xml_removed workspace.saml_sso_idp_metadata_xml_updated workspace.settings.enable_saml_sso_config_updated workspace.settings.enforce_saml_sso_config_updated workspace.settings.saml_automatic_account_creation_setting_updated)
+  | groupbycount(event.actor.person.email)
+  | where @q.count > 0
+time_range_s: 300
+run_frequency_s: 60
+event_sink_keys:
+- high_severity_alerts
+tags:
+- tactics.ta0004.privilege_escalation
+- techniques.t1484.domain_policy_modification
+- source.notion

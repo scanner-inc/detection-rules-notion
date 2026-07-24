@@ -1,0 +1,23 @@
+# schema: https://scanner.dev/schema/scanner-detection-rule.v1.json
+name: Notion Staff (notion_admin) Activity
+description: |-
+  Detect activity performed by Notion staff accounts (actor email on the
+  makenotion.com domain). In audit-log samples these accounts perform
+  permanent page deletions, trash purges, and database schema edits as part of
+  platform operations. This rule provides visibility into third-party operator
+  access to your workspace so it can be reconciled against expected support or
+  retention activity.
+severity: Informational
+query_text: |-
+  @scnr.source_type:notion
+  event.actor.person.email:*@makenotion.com
+  | groupbycount(event.type)
+  | where @q.count > 0
+time_range_s: 300
+run_frequency_s: 60
+event_sink_keys:
+- informational_severity_alerts
+tags:
+- tactics.ta0001.initial_access
+- techniques.t1199.trusted_relationship
+- source.notion

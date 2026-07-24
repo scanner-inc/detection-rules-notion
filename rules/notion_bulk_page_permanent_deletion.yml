@@ -1,0 +1,20 @@
+# schema: https://scanner.dev/schema/scanner-detection-rule.v1.json
+name: Notion Bulk Permanent Page Deletion
+description: |-
+  Detect when more than 10 pages are permanently deleted within a 1-hour
+  window. Bulk permanent deletion is destructive and unrecoverable; it may
+  indicate an attacker destroying data or a malicious insider.
+severity: Low
+query_text: |-
+  @scnr.source_type:notion
+  event.type:page.permanently_deleted
+  | count()
+  | where @q.count > 10
+time_range_s: 3600
+run_frequency_s: 60
+event_sink_keys:
+- low_severity_alerts
+tags:
+- tactics.ta0040.impact
+- techniques.t1485.data_destruction
+- source.notion

@@ -1,0 +1,23 @@
+# schema: https://scanner.dev/schema/scanner-detection-rule.v1.json
+name: Notion Workspace Security Setting Changed
+description: |-
+  Detect changes to workspace settings that affect the security posture:
+  guest access, public page sharing, invite links, content export, integration
+  restrictions, page access requests, allowed email domains, and the MCP
+  allowlist. This rule is direction-agnostic - it alerts whenever one of these
+  settings is changed, in either direction - and is intended for review of
+  administrative configuration drift.
+severity: Medium
+query_text: |-
+  @scnr.source_type:notion
+  event.type:(workspace.settings.allow_guests_setting_updated workspace.settings.allow_public_page_sharing_setting_updated workspace.settings.invite_link_setting_updated workspace.settings.invite_link_reset workspace.settings.allow_content_export_setting_updated workspace.settings.integration_restriction_settings_updated workspace.settings.page_access_request_setting_updated workspace.settings.email_domain_added workspace.settings.email_domain_removed workspace.mcp.allowlist_disabled workspace.mcp.allowlist_enabled)
+  | groupbycount(event.actor.person.email)
+  | where @q.count > 0
+time_range_s: 300
+run_frequency_s: 60
+event_sink_keys:
+- medium_severity_alerts
+tags:
+- tactics.ta0005.defense_evasion
+- techniques.t1562.impair_defenses
+- source.notion
